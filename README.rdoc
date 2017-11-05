@@ -1,0 +1,4 @@
+= piBENCH
+
+This is a very simple platformindependent BENCHMARK,  so far only for GPU.
+https://wegeneredv.de
