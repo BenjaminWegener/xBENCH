@@ -29,7 +29,7 @@ public class piBENCHActivity extends Activity {
         mainWebView.setWebViewClient(new MyCustomWebViewClient());
         mainWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         
-        mainWebView.loadUrl("http://jsfiddle.net/b8zcf4s8/3/");
+        mainWebView.loadUrl("file:///android_asset/index.html");
     }
     
     private class MyCustomWebViewClient extends WebViewClient {
