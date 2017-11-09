@@ -63,7 +63,8 @@
 	<script type="text/javascript">
 
 function log(html) {
-	document.getElementById('logDiv').innerHTML += html + '<br/><br/>'
+	document.getElementById('logDiv').innerHTML += html + '<br/><br/>';
+	var globaldummy =1;
 }
 
 
@@ -100,7 +101,7 @@ var internalRunCount = 2000000;
 
 	               var avg = totalTime / runCount;
 
-	               log('<i>' + name + '<\/i> - Avg: <b>' + avg + 'ms<\/b>, Min: ' + minTime + 'ms, Max: ' + maxTime + 'ms');
+	               log('<i>' + name + '<\/i> - avg: <b>' + avg + 'ms<\/b>, min: ' + minTime + 'ms, max: ' + maxTime + 'ms');
 	           }
 
 	           function testSet(name, tests) {
@@ -119,29 +120,7 @@ var internalRunCount = 2000000;
 	                   Math.random()*100, Math.random()*100, Math.random()*100, Math.random()*100
 	               ]);
 	           }
-	           function testMain() {
-	               log("testing CPU ("+ window.navigator.hardwareConcurrency +" cores):");
-	               //-https://stackoverflow.com/a/42143572
-					var min_runtime=9007199254740991;
-					var max_runtime=0;
-					var avg_runtime=0;
-					for (cpu=0;cpu<10;cpu++){
-					   var d = new Date();
-					   var amount = 150000000;
-					   for (var i = amount; i>0; i--) {} 
-					   var newd = new Date();
-					   var accnewd = Number(String(newd.getSeconds())+"."+String(newd.getMilliseconds()));
-					   var accd = Number(String(d.getSeconds())+"."+String(d.getMilliseconds())); 
-					   var di = accnewd-accd;
-					   //console.log(accnewd,accd,di);
-					   if (d.getMinutes() != newd.getMinutes()){di = (60*(newd.getMinutes()-d.getMinutes()))+di}
-					   var runtime = Math.round(di*1000)/1000;
-					   if(runtime > max_runtime){max_runtime=runtime}
-					   if(runtime < min_runtime){min_runtime=runtime}
-					   avg_runtime=avg_runtime + runtime;
-				   }
-				   avg_runtime = avg_runtime /10;
-	               log("<i>JSBenchmark</> by <a href='https://stackoverflow.com/a/42143572'>A. Becker</a> - <b>avg</b>: "+avg_runtime+"ms, min:"+min_runtime+", max: "+max_runtime+"s");			   
+	           function testGPU() {
 	               var canvas = document.createElement('canvas');
 	               var gl;
 	               var debugInfo;
@@ -158,10 +137,10 @@ var internalRunCount = 2000000;
 	                 vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
 	                 renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
 	               }
-	               log("testing GPU: "+renderer+"...");
+	               log("<u>testing GPU:</u> "+renderer);
 
 	               testSet('Multiplication', [
-	                   { name: 'glMatrix', test: function(count) {
+	                   { name: '<a href=https://github.com/mortennobel/glMatrix-vs-GLM-Benchmark>gl-Matrix</a>', test: function(count) {
 	                       var m1 = glMatrixRandom();
 	                       var m2 = glMatrixRandom();
 	                       var res = glMatrixRandom();
@@ -173,7 +152,52 @@ var internalRunCount = 2000000;
 	                   }}
 	               ]);
 
-	           }
+			   }
+	           function testCPU() {
+					var cores = window.navigator.hardwareConcurrency;
+					log("<u>testing CPU:</u> ("+ cores +" cores)");
+					var min_runtime=9007199254740991;
+					var max_runtime=0;
+					var avg_runtime=0;
+					for (cpu=0;cpu<runCount;cpu++){
+					   var d = new Date();
+					   var amount = 150000000;
+					   for (var i = amount; i>0; i--) {} 
+					   var newd = new Date();
+					   var accnewd = Number(String(newd.getSeconds())+"."+String(newd.getMilliseconds()));
+					   var accd = Number(String(d.getSeconds())+"."+String(d.getMilliseconds())); 
+					   var di = accnewd-accd;
+					   //console.log(accnewd,accd,di);
+					   if (d.getMinutes() != newd.getMinutes()){di = (60*(newd.getMinutes()-d.getMinutes()))+di}
+					   var runtime = Math.round(di*1000);
+					   if(runtime > max_runtime){max_runtime=runtime}
+					   if(runtime < min_runtime){min_runtime=runtime}
+					   avg_runtime=avg_runtime + runtime;
+				   }
+				   avg_runtime = avg_runtime /runCount;
+	               log("<i><a href='https://stackoverflow.com/a/42143572'>JSBenchmark</a></i> - avg: <b>"+avg_runtime+"ms</b>, min:"+min_runtime+"ms, max: "+max_runtime+"ms");			   
+					testGPU();
+			   }
+
+
+
+//https://stackoverflow.com/a/33414145
+function wait(ms){
+   var start = new Date().getTime();
+   var end = start;
+   while(end < start + ms) {
+     end = new Date().getTime();
+  }
+}			   
+
+			   function start(){
+			       log("benchmark initialized...");
+				   wait(500);
+				   testCPU();
+				   wait(500);
+
+			   }
+			   
 
 	</script>
 </head>
@@ -184,11 +208,15 @@ var internalRunCount = 2000000;
 	<div class="content">
 		<div id="logDiv">
 			<center>
-				<u>platform-independent BENCHMARK</u><sup>beta</sup>
-			</center><br>
-			<br>
+				<u>platform-independent BENCHMARK</u><sup>beta</sup><br/><br/>
+			</center>
+- lower avg values are better<br/>
+- runs on any platform that supports webgl in the browser<br/>
+- online comparism chart will be added in next update<br/>
+<br/>
+			<br/>
 		</div>
-	</div><button class="button" onclick="testMain();">
+	</div><button class="button" onclick="start();">
 	<p class="big_text">GO</p></button> 
 </body>
 </html>
