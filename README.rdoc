@@ -1,3 +1,5 @@
 = piBENCH
 
-This is a very simple platformindependent BENCHMARK,  so far only for GPU and CPU.
+This is a very simple platformindependent BENCHMARK, so far only for GPU and CPU.
+
+https://htmlpreview.github.io/?https://github.com/wegeneredv-de/piBENCH/blob/master/src/assets/index.html
