@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta content="text/html; charset=utf-8" http-equiv="content-type">
+	<title>piBENCH</title>
+	<style>
+	html,body {
+	   height: 100%
+	   width: 100%;
+	   overflow-y: hidden;
+	   overflow-x: hidden;
+	}
+	body {
+	   font-family:arial;
+	   margin:0;
+	   background:#f2f2f2;
+	}
+	.banner {
+	   background: #6424b3;
+	   height: 15%;
+	   top: 0;
+	   width: 100%;
+	   box-shadow: 0px 0.5vh 1vh 0px rgba(0,0,0,0.75);
+	}
+	.big_text {
+	   font-size: 7vh;
+	   color: white;
+	   margin: auto;
+	   padding: auto;
+	   font-weight: bold;
+	   vertical-align: center;
+	   align: center;
+
+	}
+	.content {
+	   background: #fff;
+	   line-height: 2vh;
+	   margin: 10% 5% 5% 5%;
+	   box-shadow: 0px 0.5vh 1vh 0px rgba(0,0,0,0.75);
+	   padding: 1vh 1vh 1vh 1vh;
+	   font-size: 2vh;
+	   overflow: hidden;
+	   white-space: nowrap;
+	   
+	}
+	.button {
+	   bottom: 2vh;
+	   right: 2vh;
+	   position: fixed;
+	   background-color: #4b4b4b;
+	   height: 12vh;
+	   width: 12vh;
+	   box-shadow: 0px 0.5vh 1vh 0px rgba(0,0,0,0.75);
+	   border: none;
+	   border-radius: 50%;
+	   object-fit: cover;
+
+	}
+
+	</style>
+	<script src="gl-matrix.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+
+function log(html) {
+	document.getElementById('logDiv').innerHTML += html + '<br/><br/>'
+}
+
+
+var runCount = 10;
+var internalRunCount = 2000000;
+
+
+
+	           function test(name, f) {
+	               // Repeats each benchmark multiple times to smooth out anomalies
+	               // Also tracks min and max times
+
+	               if(!f) {
+	                   log('<i>' + name + ': Unsupported<\/i>');
+	                   return;
+	               }
+
+
+	               var totalTime = 0;
+	               var minTime = 0;
+	               var maxTime = 0;
+
+	               for(var i = 0; i < runCount; ++i) {
+	                   var time = f(internalRunCount);
+	                   if(i == 0) {
+	                       minTime = time;
+	                       maxTime = time;
+	                   } else {
+	                       if(minTime > time) { minTime = time; }
+	                       if(maxTime < time) { maxTime = time; }
+	                   }
+	                   totalTime += time;
+	               }
+
+	               var avg = totalTime / runCount;
+
+	               log('<i>' + name + '<\/i> - Avg: <b>' + avg + 'ms<\/b>, Min: ' + minTime + 'ms, Max: ' + maxTime + 'ms');
+	           }
+
+	           function testSet(name, tests) {
+	               setTimeout(function() {
+	                   for(var i = 0; i < tests.length; ++i) {
+	                       test(tests[i].name, tests[i].test);
+	                   }
+	               }, 1);
+	           }
+
+	           function glMatrixRandom() {
+	               return mat4.create([
+	                   Math.random()*100, Math.random()*100, Math.random()*100, Math.random()*100,
+	                   Math.random()*100, Math.random()*100, Math.random()*100, Math.random()*100,
+	                   Math.random()*100, Math.random()*100, Math.random()*100, Math.random()*100,
+	                   Math.random()*100, Math.random()*100, Math.random()*100, Math.random()*100
+	               ]);
+	           }
+	           function testMain() {
+	               log("testing CPU ("+ window.navigator.hardwareConcurrency +" cores):");
+	               //-https://stackoverflow.com/a/42143572
+					var min_runtime=9007199254740991;
+					var max_runtime=0;
+					var avg_runtime=0;
+					for (cpu=0;cpu<10;cpu++){
+					   var d = new Date();
+					   var amount = 150000000;
+					   for (var i = amount; i>0; i--) {} 
+					   var newd = new Date();
+					   var accnewd = Number(String(newd.getSeconds())+"."+String(newd.getMilliseconds()));
+					   var accd = Number(String(d.getSeconds())+"."+String(d.getMilliseconds())); 
+					   var di = accnewd-accd;
+					   //console.log(accnewd,accd,di);
+					   if (d.getMinutes() != newd.getMinutes()){di = (60*(newd.getMinutes()-d.getMinutes()))+di}
+					   var runtime = Math.round(di*1000)/1000;
+					   if(runtime > max_runtime){max_runtime=runtime}
+					   if(runtime < min_runtime){min_runtime=runtime}
+					   avg_runtime=avg_runtime + runtime;
+				   }
+				   avg_runtime = avg_runtime /10;
+	               log("<i>JSBenchmark</> by <a href='https://stackoverflow.com/a/42143572'>A. Becker</a> - <b>avg</b>: "+avg_runtime+"ms, min:"+min_runtime+", max: "+max_runtime+"s");			   
+	               var canvas = document.createElement('canvas');
+	               var gl;
+	               var debugInfo;
+	               var vendor;
+	               var renderer;
+
+	               try {
+	                 gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+	               } catch (e) {
+	               }
+
+	               if (gl) {
+	                 debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+	                 vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+	                 renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+	               }
+	               log("testing GPU: "+renderer+"...");
+
+	               testSet('Multiplication', [
+	                   { name: 'glMatrix', test: function(count) {
+	                       var m1 = glMatrixRandom();
+	                       var m2 = glMatrixRandom();
+	                       var res = glMatrixRandom();
+	                       var start = Date.now();
+	                       for (var i = 0; i < count; ++i) {
+	                           mat4.multiply(res, m1, m2);
+	                       }
+	                       return Date.now()-start;
+	                   }}
+	               ]);
+
+	           }
+
+	</script>
+</head>
+<body>
+	<div class="banner">
+		<span class="big_text">piBENCH</span>
+	</div>
+	<div class="content">
+		<div id="logDiv">
+			<center>
+				<u>platform-independent BENCHMARK</u><sup>beta</sup>
+			</center><br>
+			<br>
+		</div>
+	</div><button class="button" onclick="testMain();">
+	<p class="big_text">GO</p></button> 
+</body>
+</html>
