@@ -1,4 +1,3 @@
 = piBENCH
 
 This is a very simple platformindependent BENCHMARK,  so far only for GPU and CPU.
-wegeneredv@gmail.com
