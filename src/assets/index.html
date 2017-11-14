@@ -4,15 +4,79 @@
 	<meta content="text/html; charset=utf-8" http-equiv="content-type">
 	<title>piBENCH</title>
 	<style>
-	html,body {
+	
+.blinking-cursor { /*https://codepen.io/ArtemGordinsky/pen/GnLBq*/
+font-weight: 100;
+font-size: 30px;
+color: white;
+-webkit-animation: 1s blink step-end infinite;
+-moz-animation: 1s blink step-end infinite;
+-ms-animation: 1s blink step-end infinite;
+-o-animation: 1s blink step-end infinite;
+animation: 1s blink step-end infinite;
+}
+@keyframes "blink" {
+	from, to {
+color: transparent;
+}
+ 50% {
+color: white;
+}
+
+}
+
+@-moz-keyframes blink {
+
+from, to {
+ color: transparent;
+ }
+50% {
+
+color: white;
+
+}}
+@-webkit-keyframes blink {
+
+from, to {
+ color: transparent;
+ }
+50% {
+
+color: white;
+
+}}@-ms-keyframes blink {
+
+from, to {
+ color: transparent;
+ }
+50% {
+
+color: white;
+
+}}@-o-keyframes blink {
+
+from, to {
+ color: transparent;
+ }
+50% {
+
+color: white;
+
+}}
+	  html,body {
 	   height: 100%
 	   width: 100%;
-	   overflow-y: hidden;
-	   overflow-x: hidden;
+	   overflow: scroll;
+	   
 	}
-	a {
-	   text-decoration:none;
+	a, a.visited {
+	color:white;
+	  text-decoration:none;
+	  font-style: italic;
+	  border:0;
+	  
 	}
+	
 	body {
 	   font-family:arial;
 	   margin:0;
@@ -36,21 +100,21 @@
 
 	}
 	.content {
-	   background: #fff;
+	   background: #000;
 	   line-height: 2vh;
 	   margin: 10% 5% 5% 5%;
 	   box-shadow: 0px 0.5vh 1vh 0px rgba(0,0,0,0.75);
 	   padding: 1vh 1vh 1vh 1vh;
 	   font-size: 2vh;
-	   overflow: hidden;
-	   white-space: nowrap;
+	   color:white;
+	  
 	   
 	}
 	.button {
 	   bottom: 2vh;
 	   right: 2vh;
 	   position: fixed;
-	   background-color: #4b4b4b;
+	   background-color: #555555;
 	   height: 12vh;
 	   width: 12vh;
 	   box-shadow: 0px 0.5vh 1vh 0px rgba(0,0,0,0.75);
@@ -59,15 +123,14 @@
 	   object-fit: cover;
 
 	}
-
 	</style>
 	<script src="gl-matrix.js" type="text/javascript"></script>
 
 	<script type="text/javascript">
-
+var go = true;
 function log(html) {
-	document.getElementById('logDiv').innerHTML += html + '<br/><br/>';
-	var globaldummy =1;
+	document.getElementById('logDiv').innerHTML += '<br/>' + html ;
+	
 }
 
 
@@ -102,9 +165,11 @@ var internalRunCount = 2000000;
 	                   totalTime += time;
 	               }
 
-	               var avg = totalTime / runCount;
-
+	               var avg_u = totalTime / runCount;
+                   var avg=avg_u.toFixed(2);
 	               log('<i>' + name + '<\/i> - avg: <b>' + avg + 'ms<\/b>, min: ' + minTime + 'ms, max: ' + maxTime + 'ms');
+				   log("<br/>benchmark done.");
+
 	           }
 
 	           function testSet(name, tests) {
@@ -140,7 +205,7 @@ var internalRunCount = 2000000;
 	                 vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
 	                 renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
 	               }
-	               log("<u>testing GPU:</u> "+renderer);
+	               log("<br/><u>testing GPU:</u> "+renderer);
 
 	               testSet('Multiplication', [
 	                   { name: '<a href=https://github.com/mortennobel/glMatrix-vs-GLM-Benchmark>gl-Matrix</a>', test: function(count) {
@@ -154,14 +219,16 @@ var internalRunCount = 2000000;
 	                       return Date.now()-start;
 	                   }}
 	               ]);
-
+	
 			   }
 	           function testCPU() {
 					var cores = window.navigator.hardwareConcurrency;
-					log("<u>testing CPU:</u> ("+ cores +" cores)");
+					log("<br/><u>testing CPU:</u> ("+ cores +" cores)");
 					var min_runtime=9007199254740991;
-					var max_runtime=0;
+					var max_runtime=1;
 					var avg_runtime=0;
+					var avg_count= 0;
+					var old_runtime=0;
 					for (cpu=0;cpu<runCount;cpu++){
 					   var d = new Date();
 					   var amount = 150000000;
@@ -173,12 +240,29 @@ var internalRunCount = 2000000;
 					   //console.log(accnewd,accd,di);
 					   if (d.getMinutes() != newd.getMinutes()){di = (60*(newd.getMinutes()-d.getMinutes()))+di}
 					   var runtime = Math.round(di*1000);
-					   if(runtime > max_runtime){max_runtime=runtime}
-					   if(runtime < min_runtime){min_runtime=runtime}
-					   avg_runtime=avg_runtime + runtime;
+					   if(runtime>0){
+					       if(cpu==0){
+						     min_runtime=runtime;
+							 max_runtime=runtime;
+						   }else{
+						     if(runtime>max_runtime){
+							   max_runtime=runtime;
+							   avg_runtime=avg_runtime + runtime;
+						       avg_count++;
+							  }else{
+							    if(runtime<min_runtime){
+								   min_runtime=runtime;
+								   avg_runtime=avg_runtime + runtime;
+						           avg_count++;
+								 }
+							  }
+						   }
+					   }
+					  
+					   
 				   }
-				   avg_runtime = avg_runtime /runCount;
-	               log("<i><a href='https://stackoverflow.com/a/42143572'>JSBenchmark</a></i> - avg: <b>"+avg_runtime+"ms</b>, min:"+min_runtime+"ms, max: "+max_runtime+"ms");			   
+				   avg_runtime = avg_runtime /avg_count;
+	               log("<a href='https://stackoverflow.com/a/42143572'>JSBenchmark</a> - avg: <b>"+avg_runtime+"ms</b>, min: "+min_runtime+"ms, max: "+max_runtime+"ms");			   
 					testGPU();
 			   }
 
@@ -194,10 +278,14 @@ function wait(ms){
 }			   
 
 			   function start(){
-			       log("benchmark initialized...");
+			       if(go){
+			       go =false;
+				   log("benchmark initialized...");
+				   log("system (user-agent): " + navigator.userAgent);
+				   
 				   wait(500);
 				   testCPU();
-				   wait(500);
+				   wait(500);}
 
 			   }
 			   
@@ -205,20 +293,19 @@ function wait(ms){
 	</script>
 </head>
 <body>
-	<div class="banner">
+  <div class="banner">
 		<span class="big_text">piBENCH</span>
 	</div>
 	<div class="content">
 		<div id="logDiv">
 			<center>
-				<u>platform-independent BENCHMARK</u><sup>beta</sup><br/><br/>
+			<a href="https://htmlpreview.github.io/?https://github.com/wegeneredv-de/piBENCH/blob/master/src/assets/index.html">platform-independent BENCHMARK</a><sup>beta</sup><br/><br/>
 			</center>
 - lower avg values are better<br/>
 - runs on any platform that supports webgl in the browser<br/>
 - online comparism chart will be added in next update<br/>
-<br/>
-			<br/>
-		</div>
+		
+		</div><div class="blinking-cursor"><b>|</b></div>
 	</div><button class="button" onclick="start();">
 	<p class="big_text">GO</p></button> 
 </body>
