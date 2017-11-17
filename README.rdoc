@@ -1,9 +1,3 @@
-= piBENCH
+= xBENCH
 
-This is a very simple platformindependent BENCHMARK, so far only for GPU and CPU.
-
-Android-version:
-https://play.google.com/store/apps/details?id=de.wegeneredv.piBENCH
-
-Browser-version:
-https://htmlpreview.github.io/?https://github.com/wegeneredv-de/piBENCH/blob/master/src/assets/index.html
+This is a very simple crossplatform BENCHMARK,  so far only for GPU and CPU.
