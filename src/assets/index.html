@@ -171,9 +171,9 @@ var internalRunCount = 2000000;
 	               }
 
 	               var avg_u = totalTime / runCount;
-                   var avg=avg_u.toFixed(2);
-	               log('<i>' + name + '<\/i> - avg: <b>' + avg + 'ms<\/b>, min: ' + minTime + 'ms, max: ' + maxTime + 'ms');
-				   log("<br/>benchmark done.");
+                   window.avg=avg_u.toFixed(0);
+	               log('<i>' + name + '<\/i> - avg: <b>' + avg + 'ms<\/b>);
+				   log("<br/>benchmark done. your device gets " + ((1/avg)*1000) + " CPU points and " + ((1/avg2)*1000) + "GPU points!");
 
 	           }
 
@@ -236,7 +236,7 @@ var internalRunCount = 2000000;
 					var old_runtime=0;
 					for (cpu=0;cpu<runCount;cpu++){
 					   var d = new Date();
-					   var amount = 990000000;
+					   var amount = 300000000;
 					   for (var i = amount; i>0; i--) {} 
 					   var newd = new Date();
 					   var accnewd = Number(String(newd.getSeconds())+"."+String(newd.getMilliseconds()));
@@ -267,6 +267,7 @@ var internalRunCount = 2000000;
 					   
 				   }
 				   avg_runtime = avg_runtime /avg_count;
+				   window.avg2 = avg_runtime;
 	               log("<a href='https://stackoverflow.com/a/42143572'>JSBenchmark</a> - avg: <b>"+avg_runtime+"ms</b>");			   
 					testGPU();
 			   }
@@ -291,7 +292,7 @@ function wait(ms){
 				   wait(500);
 				   testCPU();
 				   wait(500);}
-
+				   
 			   }
 			   
 
@@ -307,9 +308,8 @@ function wait(ms){
 			<center>
 			<a href="https://git.io/vF9K6">crossplatform BENCHMARK</a><sup>beta</sup><br/><br/>
 			</center>
-- lower avg values are better<br/>
-			- runs on any platform that runs <a href="https://www.chromium.org/">chrome</a> w/ webgl support<br/>
-- online comparism chart will be added in next update<br/>
+- works on any platform that runs <a href="https://www.chromium.org/">chrome</a> w/ webgl support<br/>
+- click or press go to start, device will hang for a few seconds...
 		
 		</div><div class="blinking-cursor"><b>|</b></div>
 	</div><button class="button" onclick="start();">
