@@ -198,7 +198,7 @@ var internalRunCount = 2000000;
 	               var avg_u = totalTime / runCount;
                    window.avg=avg_u.toFixed(0);
 	               log('<i>' + name + '<\/i> - avg: <b>' + avg + 'ms<\/b>');
-				   log("<br/>benchmark done. your device gets <b>" + ((1/avg)*10000).toFixed(2) + "</b> CPU points and <b>" + ((1/avg2)*10000).toFixed(2) + "</b> GPU points!");
+				   log("<br/>benchmark done. your device gets <b>" + ((1/avg)*10000).toFixed(2) + "</b> GPU points and <b>" + ((1/avg2)*10000).toFixed(2) + "</b> CPU points!");
 
 	           }
 
@@ -261,7 +261,7 @@ var internalRunCount = 2000000;
 					var old_runtime=0;
 					for (cpu=0;cpu<runCount;cpu++){
 					   var d = new Date();
-					   var amount = 300000000;
+					   var amount = 900000000;
 					   for (var i = amount; i>0; i--) {} 
 					   var newd = new Date();
 					   var accnewd = Number(String(newd.getSeconds())+"."+String(newd.getMilliseconds()));
@@ -312,6 +312,7 @@ function wait(ms){
 			       if(go){
 			       go =false;
 				   log("benchmark initialized...");
+				   log();    
 				   log("system (user-agent): " + navigator.userAgent);
 				   
 				   wait(500);
