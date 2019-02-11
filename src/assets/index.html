@@ -199,7 +199,9 @@ var internalRunCount = 2000000;
                    window.avg=avg_u.toFixed(0);
 	               log('<i>' + name + '<\/i> - avg: <b>' + window.avg + 'ms<\/b>');
 				   log("<br/>benchmark done. your device gets <b>" + ((1/avg)*10000).toFixed(2) + "</b> GPU points and <b>" + ((1/avg2)*10000).toFixed(2) + "</b> CPU points!");
-
+				   log("CPU: ARM CortexA55 2GHz 2.44pts - GPU: Adreno 506 14.35pts");
+				   log("CPU: Intel Pentium G4600 3.6GHz 20.92pts - GPU: IntelHD 630 104.17pts");
+				   
 	           }
 
 	           function testSet(name, tests) {
@@ -313,8 +315,6 @@ function wait(ms){
 			       go =false;
 				   log(' ');    
 				   log("benchmark initialized...");
-				   log("system (user-agent): " + navigator.userAgent);
-				   
 				   wait(500);
 				   testCPU();
 				   wait(500);}
