@@ -236,7 +236,7 @@ var internalRunCount = 2000000;
 					var old_runtime=0;
 					for (cpu=0;cpu<runCount;cpu++){
 					   var d = new Date();
-					   var amount = 150000000;
+					   var amount = 990000000;
 					   for (var i = amount; i>0; i--) {} 
 					   var newd = new Date();
 					   var accnewd = Number(String(newd.getSeconds())+"."+String(newd.getMilliseconds()));
@@ -267,7 +267,7 @@ var internalRunCount = 2000000;
 					   
 				   }
 				   avg_runtime = avg_runtime /avg_count;
-	               log("<a href='https://stackoverflow.com/a/42143572'>JSBenchmark</a> - avg: <b>"+avg_runtime+"ms</b>, min: "+min_runtime+"ms, max: "+max_runtime+"ms");			   
+	               log("<a href='https://stackoverflow.com/a/42143572'>JSBenchmark</a> - avg: <b>"+avg_runtime+"ms</b>");			   
 					testGPU();
 			   }
 
@@ -308,7 +308,7 @@ function wait(ms){
 			<a href="https://git.io/vF9K6">crossplatform BENCHMARK</a><sup>beta</sup><br/><br/>
 			</center>
 - lower avg values are better<br/>
-- runs on any platform that supports webgl in the browser<br/>
+			- runs on any platform that supports <a href="https://www.chromium.org/">chrome</a> w/ webgl support<br/>
 - online comparism chart will be added in next update<br/>
 		
 		</div><div class="blinking-cursor"><b>|</b></div>
