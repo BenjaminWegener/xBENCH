@@ -197,7 +197,7 @@ var internalRunCount = 2000000;
 
 	               var avg_u = totalTime / runCount;
                    window.avg=avg_u.toFixed(0);
-	               log('<i>' + name + '<\/i> - avg: <b>' + avg + 'ms<\/b>');
+	               log('<i>' + name + '<\/i> - avg: <b>' + avg.toFixed(2) + 'ms<\/b>');
 				   log("<br/>benchmark done. your device gets <b>" + ((1/avg)*10000).toFixed(2) + "</b> GPU points and <b>" + ((1/avg2)*10000).toFixed(2) + "</b> CPU points!");
 
 	           }
@@ -293,7 +293,7 @@ var internalRunCount = 2000000;
 				   }
 				   avg_runtime = avg_runtime /avg_count;
 				   window.avg2 = avg_runtime;
-	               log("<a href='https://stackoverflow.com/a/42143572'>JSBenchmark</a> - avg: <b>"+avg_runtime+"ms</b>");			   
+	               log("<a href='https://stackoverflow.com/a/42143572'>JSBenchmark</a> - avg: <b>"+avg_runtime.toFixed(2)+"ms</b>");			   
 					testGPU();
 			   }
 
